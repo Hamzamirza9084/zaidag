@@ -9,6 +9,6 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'admin/login', component: AdminLoginComponent },
+  { path: 'admin-login', component: AdminLoginComponent },
   { path: 'admin-dashboard', component: AdminDashboardComponent }, // Add this
 ];

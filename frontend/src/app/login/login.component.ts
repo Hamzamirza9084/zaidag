@@ -31,7 +31,7 @@ import { AuthService } from '../auth.service';
 
       <div class="auth-links">
         <p>Don't have an account? <a routerLink="/register">Register</a></p>
-        <p style="margin-top: 10px;"><a routerLink="/admin/login" style="color: #666;">Admin Access</a></p>
+        <p style="margin-top: 10px;"><a routerLink="/admin-login" style="color: #666;">Admin Access</a></p>
       </div>
     </div>
   `

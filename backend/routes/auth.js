@@ -59,14 +59,12 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Get all users (for Admin Dashboard)
 router.get('/users', async (req, res) => {
   try {
-    // Fetch all users but select only name and email, excluding _id if you want (or keep it)
-    const users = await User.find({}, 'name email'); 
+    const users = await User.find({}, '-password'); // Fetch users excluding their passwords
     res.json(users);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
