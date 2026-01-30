@@ -75,7 +75,7 @@ export class SplitTextComponent implements AfterViewInit, OnDestroy {
         delay: this.delay / 1000,
         scrollTrigger: {
           trigger: chars[0], // Trigger when first char enters view
-          start: 'top 80%',  // Start when top of text hits 80% of viewport height
+          start: 'top 100%',  // Start when top of text hits 80% of viewport height
           toggleActions: 'play none none reverse'
         }
       });

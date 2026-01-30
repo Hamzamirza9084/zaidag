@@ -1,23 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DotGridComponent } from './dot-grid.component';
-import { HeaderComponent } from './header.component';
-import { FooterComponent } from './footer.component';
-import { SplitTextComponent } from './split-text.component'; // Import here
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet, 
-    DotGridComponent, 
-    HeaderComponent, 
-    FooterComponent,
-    SplitTextComponent // Add to imports
-  ],
+  imports: [RouterOutlet, DotGridComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styles: []
 })
-export class App {
-  title = 'frontend';
-}
+export class AppComponent {} // Ensure this is named AppComponent
