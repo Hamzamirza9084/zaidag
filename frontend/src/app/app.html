@@ -9,10 +9,28 @@
   
   <app-header></app-header>
 
-  <main class="flex-grow pt-20 px-4">
-    <div class="max-w-7xl mx-auto w-full">
+  <main class="flex-grow flex flex-col justify-center items-center px-4 pt-20">
+    
+    <div class="max-w-4xl w-full text-center">
+      <app-split-text 
+        text="Building Digital Experiences" 
+        className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6"
+        [delay]="200"
+        [duration]="1.2">
+      </app-split-text>
+
+      <app-split-text 
+        text="Innovative solutions for modern web challenges." 
+        className="text-lg md:text-xl text-gray-400 font-light"
+        [delay]="800"
+        [duration]="1">
+      </app-split-text>
+    </div>
+
+    <div class="w-full max-w-7xl mx-auto mt-20">
       <router-outlet></router-outlet>
     </div>
+
   </main>
 
   <app-footer></app-footer>
