@@ -1,88 +1,93 @@
-import { Component, ElementRef, Input, AfterViewInit, ViewChildren, QueryList, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Input, Output, EventEmitter, AfterViewInit, OnDestroy, ViewChildren, QueryList, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-// Register ScrollTrigger
-gsap.registerPlugin(ScrollTrigger);
 
 @Component({
   selector: 'app-split-text',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <p [class]="className" [ngStyle]="{'text-align': textAlign}">
+    <div [class]="className" [style.textAlign]="textAlign" #textContainer>
       <span 
-        *ngFor="let word of splitWords; let i = index" 
-        class="inline-block whitespace-nowrap overflow-hidden align-top mr-[0.25em]">
-        
-        <span 
-          *ngFor="let char of word.chars" 
-          #animChar
-          class="inline-block will-change-transform opacity-0 translate-y-[40px]">
-          {{ char }}
-        </span>
+        *ngFor="let char of characters; let i = index"
+        #charSpan
+        style="display: inline-block; white-space: pre;"
+        [style.opacity]="animationFrom.opacity"
+        [style.transform]="'translateY(' + animationFrom.y + 'px)'">
+        {{ char }}
       </span>
-    </p>
-  `,
-  styles: [`
-    :host { display: block; }
-  `]
+    </div>
+  `
 })
 export class SplitTextComponent implements AfterViewInit, OnDestroy {
   @Input() text: string = '';
   @Input() className: string = '';
-  @Input() delay: number = 0;
-  @Input() duration: number = 1; // Seconds
+  @Input() delay: number = 50; // default from your snippet
+  @Input() duration: number = 1.25;
+  @Input() ease: string = 'power3.out';
+  @Input() splitType: 'chars' | 'words' = 'chars'; // currently handles chars
+  @Input() animationFrom: any = { opacity: 0, y: 40 };
+  @Input() animationTo: any = { opacity: 1, y: 0 };
+  @Input() threshold: number = 0.1;
+  @Input() rootMargin: string = '-100px';
   @Input() textAlign: string = 'center';
+  
+  @Output() letterAnimationComplete = new EventEmitter<void>();
 
-  @ViewChildren('animChar') charElements!: QueryList<ElementRef>;
+  @ViewChildren('charSpan') charSpans!: QueryList<ElementRef>;
+  @ViewChildren('textContainer') container!: ElementRef;
 
-  splitWords: { text: string, chars: string[] }[] = [];
-  private ctx: any; // GSAP Context for cleanup
+  public characters: string[] = [];
+  private observer: IntersectionObserver | null = null;
+  private isBrowser: boolean;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) platformId: Object, private el: ElementRef) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit() {
-    this.splitText();
-  }
-
-  ngOnChanges() {
-    this.splitText();
-  }
-
-  private splitText() {
-    if (!this.text) return;
-    this.splitWords = this.text.split(' ').map(word => ({
-      text: word,
-      chars: word.split('')
-    }));
+    this.characters = this.text.split('');
   }
 
   ngAfterViewInit() {
-    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.isBrowser) return;
 
-    // Use GSAP Context for easy cleanup
-    this.ctx = gsap.context(() => {
-      const chars = this.charElements.map(el => el.nativeElement);
+    const options = {
+      root: null,
+      rootMargin: this.rootMargin,
+      threshold: this.threshold
+    };
 
-      gsap.to(chars, {
-        y: 0,
-        opacity: 1,
-        duration: this.duration,
-        ease: 'power3.out',
-        stagger: 0.02,
-        delay: this.delay / 1000,
-        scrollTrigger: {
-          trigger: chars[0], // Trigger when first char enters view
-          start: 'top 100%',  // Start when top of text hits 80% of viewport height
-          toggleActions: 'play none none reverse'
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          this.animate();
+          this.observer?.disconnect(); // Trigger once
         }
       });
+    }, options);
+
+    this.observer.observe(this.el.nativeElement);
+  }
+
+  animate() {
+    const elements = this.charSpans.map(s => s.nativeElement);
+    
+    gsap.to(elements, {
+      opacity: this.animationTo.opacity,
+      y: this.animationTo.y,
+      duration: this.duration,
+      ease: this.ease,
+      stagger: this.delay / 1000, // Convert ms to seconds for GSAP
+      onComplete: () => {
+        this.letterAnimationComplete.emit();
+      }
     });
   }
 
   ngOnDestroy() {
-    if (this.ctx) this.ctx.revert();
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   }
 }
