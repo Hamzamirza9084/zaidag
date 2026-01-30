@@ -1,10 +1,20 @@
 <app-dot-grid 
-  baseColor="#333333" 
+  baseColor="#333" 
   activeColor="#5227FF"
   [dotSize]="14"
   [gap]="30">
 </app-dot-grid>
 
-<div class="relative z-10">
-  <router-outlet></router-outlet>
+<div class="relative z-10 flex flex-col min-h-screen font-sans text-white">
+  
+  <app-header></app-header>
+
+  <main class="flex-grow pt-20 px-4">
+    <div class="max-w-7xl mx-auto w-full">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <app-footer></app-footer>
+
 </div>
