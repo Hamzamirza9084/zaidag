@@ -3,11 +3,12 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminLoginComponent } from './admin-login/admin-login.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component'; // Import this
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent }, // Default path shows Header/Footer/Gallery
-  { path: 'login', component: LoginComponent }, // Login path shows ONLY Login form + Background
+  { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'admin/login', component: AdminLoginComponent },
-  { path: '**', redirectTo: '' } // Redirect unknown paths to home
+  { path: 'admin-dashboard', component: AdminDashboardComponent }, // Add this
 ];

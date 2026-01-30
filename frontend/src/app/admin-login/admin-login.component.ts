@@ -42,13 +42,21 @@ export class AdminLoginComponent {
   router = inject(Router);
 
   onSubmit() {
-    // Pass true for isAdminLogin
+    // Calling login with isAdmin=true
     this.authService.login({ email: this.email, password: this.password }, true).subscribe({
-      next: (res: any) => {
-        localStorage.setItem('adminToken', res.token);
-        this.router.navigate(['/admin/dashboard']); // Create an admin dashboard route
+      next: (response: any) => {
+        console.log('Login successful', response);
+        
+        // Store the token (use 'token' or 'adminToken' depending on your backend auth middleware)
+        localStorage.setItem('token', response.token); 
+        
+        // REDIRECT HERE -> Navigates to the Admin Dashboard
+        this.router.navigate(['/admin-dashboard']);
       },
-      error: (err) => alert('Admin Login failed: ' + err.error.message)
+      error: (err) => {
+        console.error('Login error', err);
+        alert('Admin Login failed: ' + (err.error?.message || 'Unknown error'));
+      }
     });
   }
 }
